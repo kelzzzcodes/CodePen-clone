@@ -5,18 +5,14 @@ import { MdHome } from 'react-icons/md'
 import { motion } from 'framer-motion'
 import { Link, Route, Routes } from 'react-router-dom'
 import { Logo } from '../assets'
-import {Projects, SignUp} from '../container';
-
-
-
-
-
-
-
+import { Projects, SignUp } from '../container'
+import { useSelector } from 'react-redux'
+import { UserProfileDetails } from '../components'
 
 const Home = () => {
   const [isSideMenu, setIsSideMenu] = useState(false)
-  const [user, setUser] = useState(null)
+
+  const user = useSelector((state) => state.user?.user)
   return (
     <>
       <div
@@ -64,10 +60,8 @@ const Home = () => {
           )}
         </div>
       </div>
-
+      {/* top section  */}
       <div className="flex-1 min-h-screen max-h-screen overflow-y-scroll h-full flex flex-col items-start justify-start px-4 md:px-12 py-4 md:py-12">
-        {/* top section  */}
-
         <div className="w-full flex items-center justify-between gap-3">
           {/* search  */}
           <div className="bg-secondary w-full px-4 py-3 rounded-md flex items-center justify-center gap-3">
@@ -82,9 +76,12 @@ const Home = () => {
           {/* userProfile  */}
 
           {user ? (
-            <div></div>
+            <UserProfileDetails />
           ) : (
-            <motion.div whileTap={{scale: .9}} className="flex items-center justify-center gap-3 ">
+            <motion.div
+              whileTap={{ scale: 0.9 }}
+              className="flex items-center justify-center gap-3 "
+            >
               <Link
                 to={'/home/auth'}
                 className="bg-emerald-500 px-6 py-2 rounded-md text-white text-lg cursor-pointer hover:bg-emerald-700"
@@ -97,13 +94,12 @@ const Home = () => {
 
         {/* bottom section  */}
 
-        <div className='w-full'>
-              <Routes>
+        <div className="w-full">
+          <Routes>
+            <Route path="/*" element={<Projects />} />
 
-                <Route path='/*' element={<Projects/>}/>
-                <Route path='/auth' element={<SignUp/>}/>
-              </Routes>
-
+            <Route path="/auth" element={<SignUp />} />
+          </Routes>
         </div>
       </div>
     </>

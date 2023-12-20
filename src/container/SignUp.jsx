@@ -4,7 +4,14 @@ import { UserAuthInput } from '../components'
 import { FaEnvelope, FaGithub } from 'react-icons/fa6'
 import { FcGoogle } from 'react-icons/fc'
 import { MdPassword } from 'react-icons/md'
-import { motion } from 'framer-motion'
+import { AnimatePresence, motion } from 'framer-motion'
+import { signINWithGitHub, signINWithGoogle } from '../utils/helpers'
+import {
+  createUserWithEmailAndPassword,
+  signInWithEmailAndPassword,
+} from 'firebase/auth'
+import { auth } from '../config/firebase.config'
+import { fadeInOut } from '../animations'
 
 const SignUp = () => {
   const [email, setEmail] = useState('')
@@ -13,9 +20,55 @@ const SignUp = () => {
     false,
   )
   const [isLogin, setIsLogin] = useState(false)
+  const [alert, setAlert] = useState(false)
+  const [alertMessage, setAlertMessage] = useState('')
 
   const handleIsLogin = () => {
     setIsLogin(!isLogin)
+  }
+
+  const createNewUser = async () => {
+    if (getEmailValidationStatus) {
+      await createUserWithEmailAndPassword(auth, email, password)
+        .then((userCredentials) => {
+          if (userCredentials) {
+            console.log(userCredentials)
+          }
+        })
+        .catch((error) => console.log(error))
+    }
+  }
+  const loginWithEmailPassword = async () => {
+    if (getEmailValidationStatus) {
+      await signInWithEmailAndPassword(auth, email, password)
+        .then((userCredentials) => {
+          if (userCredentials) {
+            console.log(userCredentials?.providerData[0])
+          }
+        })
+        .catch((error) => {
+          console.log(error.message)
+
+          if (error.message.includes('user-not-found')) {
+            setAlert(true)
+            setAlertMessage('Invalid Id : User Not Found')
+          } else if (error.message.includes('wrong-password')) {
+            setAlert(true)
+            setAlertMessage('Password Mismatch')
+          } else if (error.message.includes('invalid-credential')) {
+            setAlert(true)
+            setAlertMessage('Email or Password does not exist')
+          } else {
+            setAlert(true)
+            setAlertMessage(
+              'Temporarily disabled due to many failed login attempts',
+            )
+          }
+          setInterval(() => {
+            setAlert(false)
+          }, 4000)
+        })
+    }
   }
 
   return (
@@ -47,19 +100,32 @@ const SignUp = () => {
           />
 
           {/* alert section */}
+          <AnimatePresence>
+            {alert && (
+              <motion.p
+                key={'AlertMessage'}
+                {...fadeInOut}
+                className="text-red-500"
+              >
+                {alertMessage}
+              </motion.p>
+            )}
+          </AnimatePresence>
 
           {/* login button */}
 
           {!isLogin ? (
             <motion.div
               whileTap={{ scale: 0.9 }}
-              className=" flex items-center justify-center w-full py-3 rounded-xl hover:bg-emerald-400  cursor-pointer bg-emerald-500"
+              onClick={createNewUser}
+              className="flex items-center justify-center w-full py-3 rounded-xl hover:bg-emerald-400  cursor-pointer bg-emerald-500"
             >
               <p className="text-xl text-white">Sign Up</p>
             </motion.div>
           ) : (
             <motion.div
               whileTap={{ scale: 0.9 }}
+              onClick={loginWithEmailPassword}
               className=" flex items-center justify-center w-full py-3 rounded-xl hover:bg-emerald-400  cursor-pointer bg-emerald-500"
             >
               <p className="text-xl text-white">Log in</p>
@@ -98,6 +164,7 @@ const SignUp = () => {
 
           {/* sign in with google */}
           <motion.div
+            onClick={signINWithGoogle}
             className="flex items-center justify-center gap-3  bg-[rgba(256,256,256,0.2)] backdrop-blur-md w-full py-3 rounded-xl hover:bg-[rgba(256,256,256,0.4)] cursor-pointer"
             whileTap={{ scale: 0.9 }}
           >
@@ -115,6 +182,7 @@ const SignUp = () => {
           {/* sign in with github */}
 
           <motion.div
+            onClick={signINWithGitHub}
             className="flex items-center justify-center gap-3  bg-[rgba(256,256,256,0.2)] backdrop-blur-md w-full py-3 rounded-xl hover:bg-[rgba(256,256,256,0.4)] cursor-pointer"
             whileTap={{ scale: 0.9 }}
           >

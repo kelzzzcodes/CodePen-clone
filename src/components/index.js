@@ -1,3 +1,5 @@
-import UserAuthInput from "./UserAuthInput";
+import UserAuthInput from './UserAuthInput'
+import Spinner from './Spinner'
+import UserProfileDetails from './UserProfileDetails'
 
-export { UserAuthInput }
+export { UserAuthInput, Spinner, UserProfileDetails }

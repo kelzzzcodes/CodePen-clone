@@ -6,4 +6,5 @@ import Home from "./Home";
 import Projects from "./Projects";
 import SignUp from "./SignUp";
 
-export {Home, Projects, SignUp} 
+
+export {Home, Projects, SignUp}
