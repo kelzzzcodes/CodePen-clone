@@ -1,4 +1,4 @@
-import React, { useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { HiChevronDoubleLeft } from 'react-icons/hi2'
 import { FaSearchengin } from 'react-icons/fa6'
 import { MdHome } from 'react-icons/md'
@@ -6,13 +6,26 @@ import { motion } from 'framer-motion'
 import { Link, Route, Routes } from 'react-router-dom'
 import { Logo } from '../assets'
 import { Projects, SignUp } from '../container'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { UserProfileDetails } from '../components'
+import { SET_SEARCH_TERM } from '../context/actions/searchActions'
 
 const Home = () => {
   const [isSideMenu, setIsSideMenu] = useState(false)
 
   const user = useSelector((state) => state.user?.user)
+
+   const searchTerm = useSelector((state) => state?.searchTerm?.searchTerm ? state.searchTerm?.searchTerm : '');
+   const dispatch = useDispatch()
+
+  const handleHideSidebar = ( ) => {
+      setIsSideMenu(!isSideMenu)
+
+  };
+
+ 
+
+
   return (
     <>
       <div
@@ -24,7 +37,7 @@ const Home = () => {
 
         <motion.div
           whileTap={{ scale: 0.9 }}
-          onClick={() => setIsSideMenu(!isSideMenu)}
+          onClick={handleHideSidebar}
           className="w-8 h-8 bg-secondary rounded-tr-lg  rounded-br-lg absolute -right-6 flex items-center justify-center cursor-pointer"
         >
           <HiChevronDoubleLeft className="text-white text-xl" />
@@ -70,6 +83,8 @@ const Home = () => {
               type="text"
               className="flex-1 px-4 py-1 text-xl bg-transparent outline-none border-none text-primaryText placeholder:text-gray-600"
               placeholder="Search here..."
+              value={searchTerm}
+              onChange={(e) => dispatch(SET_SEARCH_TERM(e.target.value))}
             />
           </div>
 

@@ -8,6 +8,6 @@ export const SET_USER = (user) => {
 export const Set_user_null = () => {
   return {
     type: 'SET_USER_NULL',
-  
+
   }
 }

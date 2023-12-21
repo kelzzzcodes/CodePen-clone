@@ -43,6 +43,8 @@ export const Menus = [
   export const signOutAction = async() => {
     await auth.signOut().then(() => {
       localStorage.clear();
+
+
       window.location.reload();
     });
 
